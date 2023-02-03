@@ -10,10 +10,10 @@ mongoose.connect(url, {useNewUrlParser: true, useUnifiedTopology: true})
   });
 
 const reviewsSchema = new Schema({
-  id: {type: Number, required: true}, //review_id
-  product_id: {type: Number, required: true},
+  id: {type: String, required: true, index: { unique: true }}, //review_id
+  product_id: {type: String, required: true},
   rating: {type: Number, required: true},
-  date: {type: Number, required:true},
+  date: {type: Date, required:true},
   summary: {type: String, required:true},
   body: {type: String, required:true},
   recommend: {type: Boolean, required: true},
@@ -22,26 +22,29 @@ const reviewsSchema = new Schema({
   reviewer_email: {type: String, required:true},
   response: {type:String},
   helpfulness: {type: Number, required:true},
-  photos: [
-    // review_id: {type: Number, required: true},
-    // id: {type: String, index: true}, //photo_id
-    // url: {type: String}
-  ],
-  characteristics: [
-    // id: {type: Number, required:true},
-    // characteristic_id: {type: Number, required:true},
-    // review_id: {type: Number, required:true},
-    // value: {type: Number, required:true}
-  ]
+  photos: []
 });
 
+const charSchema = new Schema({
+  id : {type: String, index: { unique: true }},
+  product_id: {type: String, required: true},
+  name: {type: String, required: true}
+})
+
+const charReviewSchema = new Schema({
+  id : {type: String, index: { unique: true }},
+  characteristic_id: {type: String, required: true},
+  review_id: {type: String, required: true},
+  value: {type: Number, required: true}
+})
+
 const resultSchema = new Schema({
-  product_id: {type: Number, required: true},
-  result: []
- });
+//intentionally empty;
+});
 
 const Reviews = mongoose.model('Reviews', reviewsSchema);
-// const ReviewsMeta = mongoose.model('ReviewsMeta', reviewsMetaSchema);
-const Results = mongoose.model('Results', resultSchema);
+const Char = mongoose.model('Char', charSchema);
+const CharReview = mongoose.model('CharReview', charReviewSchema);
+const Results = mongoose.model('Results', resultSchema, 'Results');
 
-module.exports = {Reviews, Results};
+module.exports = {Reviews, Char, CharReview, Results};

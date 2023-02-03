@@ -1,4 +1,5 @@
-const {Reviews, Results} = require('./schema.js');
+const {Reviews, Char, CharReview} = require('./schema.js');
+const mongoose = require('mongoose');
 const charReviewsPath = '/Users/hyoon/Workspace/rpp2207/SDC/Reviews/rawData/characteristic_reviews.csv';
 const characteristicsPath = '/Users/hyoon/Workspace/rpp2207/SDC/Reviews/rawData/characteristics.csv';
 const reviewPhotosPath = '/Users/hyoon/Workspace/rpp2207/SDC/Reviews/rawData/reviews_photos.csv';
@@ -7,40 +8,6 @@ const productPath = '/Users/hyoon/Workspace/rpp2207/SDC/Reviews/rawData/product.
 
 const csv = require('csv-parser');
 const fs = require('fs');
-
-async function seedResults() {
-  return new Promise(function(resolve, reject) {
-    const stream = fs.createReadStream(productPath).pipe(csv());
-    var counter = 0;
-    var tempStroage = [];
-      stream.on('data', (data) => {
-          counter++;
-          data.product_id = data.id;
-          delete data.id;
-          tempStroage.push(data);
-          if (counter % 50000 === 0) {
-            stream.pause();
-            Results.insertMany(tempStroage);
-            console.log(counter + ' lines of Result seeded');
-            tempStroage = [];
-            stream.resume();
-          }
-      })
-      .on('end', () => {
-        if (tempStroage.length) {
-          stream.pause();
-          Results.insertMany(tempStroage);
-          stream.resume();
-        }
-        console.log('Result Seeding Done');
-        resolve();
-      })
-      .on('error', () => {
-        console.log('Result Seeding Failed');
-        reject();
-      });
-  })
-};
 
 async function seedReviews() {
   return new Promise(function(resolve, reject) {
@@ -109,6 +76,45 @@ async function seedPhotos() {
   })
 };
 
+async function seedResults() {
+  return new Promise(function(resolve, reject) {
+    Reviews.aggregate([
+      {
+        '$group': {
+          '_id': '$product_id',
+          'results': {
+            '$push': {
+              'id': '$id',
+              'rating': '$rating',
+              'date': '$date',
+              'summary': '$summary',
+              'body': '$body',
+              'recommend': '$recommend',
+              'reported': '$reported',
+              'reviewer_name': '$reviewer_name',
+              'reviewer_email': '$reviewer_email',
+              'response': '$response',
+              'helpfulness': '$helpfulness',
+              'photos': '$photos'
+            }
+          }
+        }
+      }, {
+        '$out': 'Results'
+      }
+    ])
+    .then((result) => {
+      console.log('Result Grouped by Product ID');
+      mongoose.Results.createIndexes({product_id: 1});
+      resolve();
+    })
+    .catch((err) => {
+      console.log('Result Groupping Failed');
+      reject();
+    })
+  })
+};
+
 async function seedCharReviews() {
   return new Promise(function(resolve, reject) {
     const stream = fs.createReadStream(charReviewsPath).pipe(csv());
@@ -116,16 +122,11 @@ async function seedCharReviews() {
     var tempStroage = [];
     stream.on('data', (data) => {
       counter++;
-      var targetReviewId = data.review_id;
-      delete data.review_id;
-      delete data.id;
-      data.name = '';
       //id,characteristic_id,review_id,value
-      var updateOne = {updateOne : {filter: {id : targetReviewId}, update: {$push: {characteristics : data}}}};
-      tempStroage.push(updateOne);
+      tempStroage.push(data);
       if (counter % 10000 === 0) {
         stream.pause();
-        Reviews.bulkWrite(tempStroage);
+        CharReview.insertMany(tempStroage);
         console.log(counter + ' lines of Characteristics Reivews seeded');
         tempStroage = [];
         stream.resume();
@@ -134,7 +135,7 @@ async function seedCharReviews() {
     .on('end', () => {
       if (tempStroage.length) {
         stream.pause();
-        Reviews.bulkWrite(tempStroage);
+        CharReview.insertMany(tempStroage);
         stream.resume();
       }
       console.log('Characteristics Reivews Seeding Done');
@@ -154,20 +155,12 @@ async function seedCharacteristics() {
     var tempStroage = [];
     stream.on('data', (data) => {
       counter++;
-      var targetProdId = data.product_id;
-      var targetCharId = data.id;
-      //Charcteristic Reviews have duplicate characteristic_id, hence using updateMany
       //id,product_id,name
-      var updateMany = {updateMany : {
-        filter: {'product_id' : targetProdId},
-        update: {$set: {'characteristics.$[object].name' : data.name}},
-        arrayFilters: [{'object.characteristic_id' : targetCharId}]
-      }};
-      tempStroage.push(updateMany);
+      tempStroage.push(data);
       if (counter % 10000 === 0) {
         stream.pause();
-        Reviews.bulkWrite(tempStroage);
-        console.log(counter + ' lines of Characteristics Reivews seeded');
+        Char.insertMany(tempStroage);
+        console.log(counter + ' lines of Characteristics seeded');
         tempStroage = [];
         stream.resume();
       }
@@ -175,14 +168,14 @@ async function seedCharacteristics() {
     .on('end', () => {
       if (tempStroage.length) {
         stream.pause();
-        Reviews.bulkWrite(tempStroage);
+        Char.insertMany(tempStroage);
         stream.resume();
       }
-      console.log('Characteristics Reivews Seeding Done');
+      console.log('Characteristics Seeding Done');
       resolve();
     })
     .on('error', () => {
-      console.log('Characteristics Reivews Seeding Failed');
+      console.log('Characteristics Seeding Failed');
       reject();
     });
   })
@@ -191,12 +184,12 @@ async function seedCharacteristics() {
 async function seedingData () {
   await seedReviews();
   await seedPhotos();
+  await seedResults();
   await seedCharReviews();
   await seedCharacteristics();
 };
 
-// seedingData();
-seedCharReviews();
+seedingData();
 
 //Stress Test (local)
 //Httperf, K6, Artillery
