@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const { MongoClient } = require('mongodb');
-const port = 3000;
+const port = 5050;
 const routes = require('./routes.js');
 
 const url = 'mongodb://localhost:27017';
@@ -11,7 +11,7 @@ async function main() {
   // Use connect method to connect to the server
   await client.connect();
   console.log('Connected successfully to server');
-  const db = client.db('SDC');
+  const db = client.db('SDC2');
   module.exports.db = db;
   // the following code examples can be pasted here...
 
@@ -36,4 +36,3 @@ app.get('/', (req, res) => {
 });
 
 module.exports.app = app;
-// module.exports.db = db;

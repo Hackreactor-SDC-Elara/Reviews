@@ -1,4 +1,5 @@
 const {Reviews, Char, CharReview} = require('./schema.js');
+const index = require('../../server/index.js');
 const mongoose = require('mongoose');
 const charReviewsPath = '/Users/hyoon/Workspace/rpp2207/SDC/Reviews/rawData/characteristic_reviews.csv';
 const characteristicsPath = '/Users/hyoon/Workspace/rpp2207/SDC/Reviews/rawData/characteristics.csv';
@@ -50,6 +51,7 @@ async function seedPhotos() {
     stream.on('data', (data) => {
       counter++;
       var targetReviewId = data.review_id;
+      delete data.review_id;
       var updateOne = {updateOne : {filter: {id : targetReviewId}, update: {$push: {photos : data}}}};
       tempStroage.push(updateOne);
       if (counter % 10000 === 0) {
@@ -105,7 +107,6 @@ async function seedResults() {
     ])
     .then((result) => {
       console.log('Result Grouped by Product ID');
-      mongoose.Results.createIndexes({product_id: 1});
       resolve();
     })
     .catch((err) => {
@@ -171,6 +172,7 @@ async function seedCharacteristics() {
         Char.insertMany(tempStroage);
         stream.resume();
       }
+      index.db.collection('chars').createIndex({id: 1},{unique: true});
       console.log('Characteristics Seeding Done');
       resolve();
     })
@@ -181,15 +183,66 @@ async function seedCharacteristics() {
   })
 };
 
+async function seedMetaCharData() {
+  return new Promise(function(resolve, reject) {
+    CharReview.aggregate([
+      {
+        '$lookup': {
+          'from': 'chars',
+          'localField': 'characteristic_id',
+          'foreignField': 'id',
+          'as': 'fromChars'
+        }
+      }, {
+        '$replaceRoot': {
+          'newRoot': {
+            '$mergeObjects': [
+              {
+                '$arrayElemAt': [
+                  '$fromChars', 0
+                ]
+              }, '$$ROOT'
+            ]
+          }
+        }
+      }, {
+        '$group': {
+          '_id': '$product_id',
+          'result': {
+            '$push': {
+              'id': '$characteristic_id',
+              'name': '$name',
+              'value': '$value'
+            }
+          }
+        }
+      }, {
+        '$out': 'Characteristics'
+      }
+    ])
+    .then(() => {
+      console.log('Characteristics DB Collection Created');
+      resolve();
+    })
+    .catch((err) => {
+      console.log('Characteristics DB Collection Creation Failed', err);
+      reject();
+    })
+  });
+
+};
+
 async function seedingData () {
   await seedReviews();
   await seedPhotos();
   await seedResults();
   await seedCharReviews();
   await seedCharacteristics();
+  await seedMetaCharData();
 };
 
 seedingData();
+
 
 //Stress Test (local)
 //Httperf, K6, Artillery

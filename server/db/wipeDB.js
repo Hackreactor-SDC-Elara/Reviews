@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-var url = 'mongodb://localhost/SDC';
+var url = 'mongodb://localhost/SDC2';
 mongoose.connect(url, {useNewUrlParser: true, useUnifiedTopology: true})
   .then(() => {
     mongoose.connection.db.dropDatabase(function(err, result) {
