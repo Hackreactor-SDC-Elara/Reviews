@@ -1,13 +1,35 @@
 const {Reviews, Char, CharReview, Results} = require('../db/schema.js');
 const mongoose = require('mongoose');
 const index = require('../../server/index.js');
-// const resultSchema = new mongoose.Schema({
-//   //intentionally empty;
-//   });
-// const Results = mongoose.model('Results', resultSchema, 'Results');
+
 module.exports = {
+  // getReviews: async (req, res) => {
+  //   var targetProdId = parseInt(req.query.product_id);
+  //   var sortOption = req.query.sort || 'helpful';
+  //   var sortField = 'helpfulness';
+  //   var page = req.query.page || 1;
+  //   var count = req.query.count || 5;
+  //   if (sortOption === 'newest') {
+  //     sortField = 'date';
+  //   }
+  //   await index.db.collection('Results').find({'_id': targetProdId}).sort({[sortField] : -1}).limit(count).toArray()
+  //     .then((result) => {
+  //       result = result[0];
+  //       result.product_id = result._id;
+  //       result.result = result.result;
+  //       delete result._id;
+  //       res.status(200).send(result);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       res.status(500).send(err);
+  //     })
+  //     // console.log(result);
+  //     // res.send(result);
+  // },
   getReviews: async (req, res) => {
-    var targetProdId = parseInt(req.query.product_id);
+    var start = new Date();
+    var product_id = req.query.product_id;
     var sortOption = req.query.sort || 'helpful';
     var sortField = 'helpfulness';
     var page = req.query.page || 1;
@@ -15,20 +37,18 @@ module.exports = {
     if (sortOption === 'newest') {
       sortField = 'date';
     }
-    await index.db.collection('Results').find({'_id': targetProdId}).sort({[sortField] : -1}).limit(count).toArray()
+    console.log(product_id);
+    await Reviews.find({'product_id': product_id}).limit(count)
       .then((result) => {
-        result = result[0];
-        result.product_id = result._id;
-        result.result = result.result;
-        delete result._id;
+        var end = Date.now();
+        console.log('Response Time', (end-start), 'ms');
+        console.log(result);
         res.status(200).send(result);
       })
       .catch((err) => {
         console.log(err);
-        res.status(500).send(err);
+        res.status(500).send();
       })
-      // console.log(result);
-      // res.send(result);
   },
 
   postReviews: async (req, res) => {

@@ -189,7 +189,7 @@ async function seedingData () {
   await seedCharacteristics();
 };
 
-seedingData();
+seedReviews();
 
 //Stress Test (local)
 //Httperf, K6, Artillery

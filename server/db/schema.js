@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-var url = 'mongodb://localhost/SDC';
+var url = 'mongodb://localhost/SDC3';
 mongoose.connect(url, {useNewUrlParser: true, useUnifiedTopology: true})
   .then(() => {
     console.log('MongoDB connected');
@@ -10,7 +10,7 @@ mongoose.connect(url, {useNewUrlParser: true, useUnifiedTopology: true})
   });
 
 const reviewsSchema = new Schema({
-  id: {type: String, required: true, index: { unique: true }}, //review_id
+  id: {type: String, required: true}, //review_id
   product_id: {type: String, required: true},
   rating: {type: Number, required: true},
   date: {type: Date, required:true},
