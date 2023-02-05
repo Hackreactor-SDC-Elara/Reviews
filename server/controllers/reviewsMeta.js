@@ -8,7 +8,10 @@ module.exports = {
     } else {
       var targetProdId = req.params.product_id;
     }
-
+    if (targetProdId === undefined) {
+      res.status(400).send();
+      return;
+    }
     var outgoingData = {
       product_id: targetProdId,
       ratings: {},
@@ -181,6 +184,7 @@ module.exports = {
       })
       .catch((err) => {
         console.log(err);
+        res.status(500).send();
       })
   }
 

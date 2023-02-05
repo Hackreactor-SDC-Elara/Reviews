@@ -20,6 +20,10 @@ module.exports = {
       var page = req.params.page || 1;
       var count = parseInt(req.params.count) || 5;
     }
+    if (targetProdId === undefined) {
+      res.status(400).send();
+      return;
+    }
     var outgoingData = {
       product_id: targetProdId
     };
@@ -39,8 +43,16 @@ module.exports = {
   },
 
   postReviews: async (req, res) => {
-    // let start = new Date();
+    console.log(req.body);
     var targetProdId = req.body.product_id;
+    if (targetProdId === undefined) { //empty product_id
+      res.status(400).send();
+      return;
+    }
+    if (!parseInt(targetProdId)) { //invalid product_id
+      res.status(500).send();
+      return;
+    }
     var incomingData = {
       id : '',
       product_id: targetProdId,
@@ -119,7 +131,15 @@ module.exports = {
     } else {
       var targetReviewId = req.params.review_id;
     }
+    if (targetReviewId === undefined) {
+      res.status(400).send();
+      return;
+    }
     targetReviewId = parseInt(targetReviewId);
+    if (!targetReviewId) {
+      res.status(500).send();
+      return;
+    }
     var targetProdId = '';
     //find product_id to update Results
     await index.db.collection('reviews').find({'id': targetReviewId}).toArray()
@@ -157,7 +177,15 @@ module.exports = {
     } else {
       var targetReviewId = req.params.review_id;
     }
+    if (targetReviewId === undefined) {
+      res.status(400).send();
+      return;
+    }
     targetReviewId = parseInt(targetReviewId);
+    if (!targetReviewId) {
+      res.status(500).send();
+      return;
+    }
     var targetProdId = '';
     //find product_id to update Results
     await index.db.collection('reviews').find({'id': parseInt(targetReviewId)}).toArray()

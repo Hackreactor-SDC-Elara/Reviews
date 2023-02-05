@@ -31,8 +31,8 @@ app.listen(port, () => {
 
 app.use(routes);
 
-app.get('/', (req, res) => {
-  res.send('SDC TESTING')
+app.get('/test', (req, res) => {
+  res.status(200).send('SDC TESTING')
 });
 
 module.exports.app = app;

@@ -4,7 +4,7 @@
   "description": "Repo for Reviews API Service",
   "main": "server/index.js",
   "scripts": {
-    "test": "jest server.test.js",
+    "test": "jest --coverage reviews.test.js",
     "server-dev": "npx nodemon --watch server/index.js",
     "wipeDB": "node server/db/wipeDB.js",
     "seedDB": "node server/db/seeder.js"
