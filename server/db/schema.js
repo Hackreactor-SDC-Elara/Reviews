@@ -11,7 +11,7 @@ mongoose.connect(url, {useNewUrlParser: true, useUnifiedTopology: true})
 
 const reviewsSchema = new Schema({
   id: {type: Number, required: true, index: { unique: true }}, //review_id
-  product_id: {type: String, required: true},
+  product_id: {type: Number, required: true},
   rating: {type: Number, required: true},
   date: {type: Date, required:true},
   summary: {type: String, required:true},
@@ -26,15 +26,15 @@ const reviewsSchema = new Schema({
 });
 
 const charSchema = new Schema({
-  id : {type: String, index: { unique: true }},
-  product_id: {type: String, required: true},
+  id : {type: Number, index: { unique: true }},
+  product_id: {type: Number, required: true},
   name: {type: String, required: true}
 })
 
 const charReviewSchema = new Schema({
-  id : {type: String, index: { unique: true }},
-  characteristic_id: {type: String, required: true},
-  review_id: {type: String, required: true},
+  id : {type: Number, index: { unique: true }},
+  characteristic_id: {type: Number, required: true},
+  review_id: {type: Number, required: true},
   value: {type: Number, required: true}
 })
 

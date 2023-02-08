@@ -1,11 +1,11 @@
 const {Reviews, Char, CharReview} = require('./schema.js');
 const index = require('../../server/index.js');
 const mongoose = require('mongoose');
-const charReviewsPath = '/Users/hyoon/Workspace/rpp2207/SDC/Reviews/rawData/characteristic_reviews.csv';
-const characteristicsPath = '/Users/hyoon/Workspace/rpp2207/SDC/Reviews/rawData/characteristics.csv';
-const reviewPhotosPath = '/Users/hyoon/Workspace/rpp2207/SDC/Reviews/rawData/reviews_photos.csv';
-const reviewsPath = '/Users/hyoon/Workspace/rpp2207/SDC/Reviews/rawData/reviews.csv';
-const productPath = '/Users/hyoon/Workspace/rpp2207/SDC/Reviews/rawData/product.csv';
+const charReviewsPath = './rawData/characteristic_reviews.csv';
+const characteristicsPath = './rawData/characteristics.csv';
+const reviewPhotosPath = './rawData/reviews_photos.csv';
+const reviewsPath = './rawData/reviews.csv';
+const productPath = './rawData/product.csv';
 
 const csv = require('csv-parser');
 const fs = require('fs');
@@ -32,6 +32,7 @@ async function seedReviews() {
         stream.pause();
         Reviews.insertMany(tempStroage);
         stream.resume();
+        index.db.collection('reviews').createIndex({id: 1},{unique: true});
       }
       console.log('Review Seeding Done');
       resolve();
@@ -139,6 +140,7 @@ async function seedCharReviews() {
         CharReview.insertMany(tempStroage);
         stream.resume();
       }
+      index.db.collection('charreviews').createIndex({id: 1},{unique: true});
       console.log('Characteristics Reivews Seeding Done');
       resolve();
     })
@@ -241,8 +243,8 @@ async function seedingData () {
   await seedMetaCharData();
 };
 
-seedingData();
-
+// seedingData();
+seedMetaCharData();
 
 //Stress Test (local)
 //Httperf, K6, Artillery

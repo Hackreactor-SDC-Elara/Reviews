@@ -24,27 +24,84 @@ module.exports = {
       res.status(400).send();
       return;
     }
+    targetProdId = parseInt(targetProdId);
     var outgoingData = {
       product_id: targetProdId
     };
     if (sortOption === 'newest') {
-      sortField = 'date';
+      await index.db.collection('Results').aggregate([
+          {
+            '$match': {
+              '_id': targetProdId
+            }
+          }, {
+            '$unwind': {
+              'path': '$results'
+            }
+          }, {
+            '$sort': {
+              'results.helpfulness': -1
+            }
+          }, {
+            '$limit': count
+          }, {
+            '$group': {
+              '_id': '$_id',
+              'results': {
+                '$push': '$results'
+              }
+            }
+          }
+        ]).toArray()
+        .then((result) => {
+          console.log(result);
+          outgoingData.results = result[0].results;
+          res.status(200).send(outgoingData);
+        })
+        .catch((err) => {
+          console.log(err);
+          res.status(500).send(err);
+        })
+    } else {
+      await index.db.collection('Results').aggregate([
+          {
+            '$match': {
+              '_id': targetProdId
+            }
+          }, {
+            '$unwind': {
+              'path': '$results'
+            }
+          }, {
+            '$sort': {
+              'results.helpfulness': -1
+            }
+          }, {
+            '$limit': count
+          }, {
+            '$group': {
+              '_id': '$_id',
+              'results': {
+                '$push': '$results'
+              }
+            }
+          }
+        ]).toArray()
+        .then((result) => {
+          outgoingData.results = result[0].results;
+          res.status(200).send(outgoingData);
+        })
+        .catch((err) => {
+          console.log(err);
+          res.status(500).send(err);
+        })
     }
-    await index.db.collection('Results').find({'_id': targetProdId}).sort({[sortField] : -1}).limit(count).toArray()
-      .then((result) => {
-        result = result[0];
-        outgoingData.results = result.results;
-        res.status(200).send(outgoingData);
-      })
-      .catch((err) => {
-        console.log(err);
-        res.status(500).send(err);
-      })
+
   },
 
   postReviews: async (req, res) => {
-    console.log(req.body);
     var targetProdId = req.body.product_id;
+    targetProdId = parseInt(targetProdId);
     if (targetProdId === undefined) { //empty product_id
       res.status(400).send();
       return;
@@ -106,7 +163,7 @@ module.exports = {
         })
     };
     for (const charId in tempChar) {
-      await grabNameAndInsert(charId);
+      await grabNameAndInsert(parseInt(charId));
       // let grabName = Date.now();
       // console.log('grabbing names: ', (grabName - start)/1000);
     }

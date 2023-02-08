@@ -12,6 +12,7 @@ module.exports = {
       res.status(400).send();
       return;
     }
+    targetProdId = parseInt(targetProdId);
     var outgoingData = {
       product_id: targetProdId,
       ratings: {},
@@ -21,7 +22,7 @@ module.exports = {
     var rating = await index.db.collection('Results').aggregate([
       {
         '$match': {
-          '_id': `${targetProdId}`
+          '_id': targetProdId
         }
       }, {
         '$unwind': {
@@ -91,7 +92,7 @@ module.exports = {
     var recommendation = await index.db.collection('Results').aggregate([
       {
         '$match': {
-          '_id': `${targetProdId}`
+          '_id': targetProdId
         }
       }, {
         '$unwind': {
@@ -105,7 +106,7 @@ module.exports = {
               '$cond': [
                 {
                   '$eq': [
-                    '$results.recommend', true
+                    '$results.recommend', false
                   ]
                 }, 1, 0
               ]
@@ -116,7 +117,7 @@ module.exports = {
               '$cond': [
                 {
                   '$eq': [
-                    '$results.recommend', false
+                    '$results.recommend', true
                   ]
                 }, 1, 0
               ]
@@ -128,7 +129,7 @@ module.exports = {
     var characteristic = await index.db.collection('Characteristics').aggregate([
       {
         '$match': {
-          '_id': `${targetProdId}`
+          '_id': targetProdId
         }
       }, {
         '$unwind': {
@@ -156,10 +157,10 @@ module.exports = {
         var charTemp = results[2];
         var characteristics = {};
         var assignChar = function(charObj) {
-          if (charObj._id === 'Fit') {
-            characteristics.Fit = {};
-            characteristics.Fit.id = charObj.result[0].id;
-            characteristics.Fit.value = charObj.value;
+          if (charObj._id === 'Size') {
+            characteristics.Size = {};
+            characteristics.Size.id = charObj.result[0].id;
+            characteristics.Size.value = charObj.value;
           } else if (charObj._id === 'Length') {
             characteristics.Length = {};
             characteristics.Length.id = charObj.result[0].id;
@@ -168,6 +169,14 @@ module.exports = {
             characteristics.Comfort = {};
             characteristics.Comfort.id = charObj.result[0].id;
             characteristics.Comfort.value = charObj.value;
+          } else if (charObj._id === 'Fit') {
+            characteristics.Fit = {};
+            characteristics.Fit.id = charObj.result[0].id;
+            characteristics.Fit.value = charObj.value;
+          } else if (charObj._id === 'Width') {
+            characteristics.Width = {};
+            characteristics.Width.id = charObj.result[0].id;
+            characteristics.Width.value = charObj.value;
           } else if (charObj._id === 'Quality') {
             characteristics.Quality = {};
             characteristics.Quality.id = charObj.result[0].id;
