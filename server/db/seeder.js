@@ -62,7 +62,7 @@ async function seedPhotos() {
       delete data.review_id;
       var updateOne = {updateOne : {filter: {id : targetReviewId}, update: {$push: {photos : data}}}};
       tempStroage.push(updateOne);
-      if (counter % 10000 === 0) {
+      if (counter % 1000 === 0) {
         stream.pause();
         Reviews.bulkWrite(tempStroage).then(() => {
           console.log(counter + ' lines of Photos seeded');
@@ -257,7 +257,7 @@ async function seedMetaCharData() {
 };
 
 async function seedingData() {
-  await seedReviews();
+  // await seedReviews();
   await seedPhotos();
   await seedResults();
   await seedCharReviews();
