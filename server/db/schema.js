@@ -30,13 +30,8 @@ const charReviewSchema = new Schema({
   value: {type: Number, required: true}
 })
 
-const resultSchema = new Schema({
-  //intentionally empty;
-});
-
 const Reviews = mongoose.model('Reviews', reviewsSchema);
 const Char = mongoose.model('Char', charSchema);
 const CharReview = mongoose.model('CharReview', charReviewSchema);
-const Results = mongoose.model('Results', resultSchema, 'Results');
 
-module.exports = {Reviews, Char, CharReview, Results};
+module.exports = {Reviews, Char, CharReview};
