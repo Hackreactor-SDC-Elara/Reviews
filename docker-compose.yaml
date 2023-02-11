@@ -11,16 +11,6 @@ services:
     volumes:
       - mongo_db:/data/db
 
-  # dbseed:
-  #   container_name: dbseed
-  #   build:
-  #     context: ./mongo
-  #     dockerfile: Dockerfile
-  #   links:
-  #     - mongo_db
-  #   depends_on:
-  #     - mongo_db
-
   # Node API Service
   api:
     build: .
@@ -35,8 +25,8 @@ services:
       DB_NAME: SDC
     depends_on:
       - mongo_db
-    command:
-      ["npm","run","seedDB"]
+    # command:
+    #   ["npm","run","seedDB"]
     links:
       - mongo_db
 
