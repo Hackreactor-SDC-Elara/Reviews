@@ -1,12 +1,13 @@
 const {Reviews, Char, CharReview} = require('./schema.js');
-const index = require('../../server/index.js');
 const mongoose = require('mongoose');
+const index = require('../../server/index.js');
 const charReviewsPath = './rawData/characteristic_reviews.csv';
 const characteristicsPath = './rawData/characteristics.csv';
 const reviewPhotosPath = './rawData/reviews_photos.csv';
 const reviewsPath = './rawData/reviews.csv';
 const productPath = './rawData/product.csv';
-
+require('dotenv').config();
+mongoose.connect(process.env.MONGOOSE_URI, {useNewUrlParser: true, useUnifiedTopology: true});
 const csv = require('csv-parser');
 const fs = require('fs');
 
@@ -21,19 +22,25 @@ async function seedReviews() {
       tempStroage.push(data);
       if (counter % 10000 === 0) {
         stream.pause();
-        Reviews.insertMany(tempStroage);
-        console.log(counter + ' lines of Reviews seeded');
-        tempStroage = [];
-        stream.resume();
+        Reviews.insertMany(tempStroage).then(() => {
+          console.log(counter + ' lines of Reviews seeded');
+          tempStroage = [];
+          stream.resume();
+        })
+        .catch((err) => {
+          console.log(err);
+        })
       }
     })
     .on('end', () => {
       if (tempStroage.length) {
         stream.pause();
-        Reviews.insertMany(tempStroage);
-        stream.resume();
-        index.db.collection('reviews').createIndex({id: 1},{unique: true});
+        Reviews.insertMany(tempStroage).then(() => {
+          stream.resume();
+        })
       }
+      index.db.collection('reviews').createIndex({id: 1},{unique: true});
+      index.db.collection('reviews').createIndex({product_id: 1});
       console.log('Review Seeding Done');
       resolve();
     })
@@ -57,10 +64,15 @@ async function seedPhotos() {
       tempStroage.push(updateOne);
       if (counter % 10000 === 0) {
         stream.pause();
-        Reviews.bulkWrite(tempStroage);
-        console.log(counter + ' lines of Photos seeded');
-        tempStroage = [];
-        stream.resume();
+        Reviews.bulkWrite(tempStroage).then(() => {
+          console.log(counter + ' lines of Photos seeded');
+          tempStroage = [];
+          stream.resume();
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+
       }
     })
     .on('end', () => {
@@ -81,6 +93,7 @@ async function seedPhotos() {
 
 async function seedResults() {
   return new Promise(function(resolve, reject) {
+    console.log('Result Grouping...');
     Reviews.aggregate([
       {
         '$group': {
@@ -128,10 +141,14 @@ async function seedCharReviews() {
       tempStroage.push(data);
       if (counter % 10000 === 0) {
         stream.pause();
-        CharReview.insertMany(tempStroage);
-        console.log(counter + ' lines of Characteristics Reivews seeded');
-        tempStroage = [];
-        stream.resume();
+        CharReview.insertMany(tempStroage).then(() => {
+          console.log(counter + ' lines of Characteristics Reivews seeded');
+          tempStroage = [];
+          stream.resume();
+        })
+        .catch((err) => {
+          console.log(err);
+        })
       }
     })
     .on('end', () => {
@@ -162,16 +179,20 @@ async function seedCharacteristics() {
       tempStroage.push(data);
       if (counter % 10000 === 0) {
         stream.pause();
-        Char.insertMany(tempStroage);
-        console.log(counter + ' lines of Characteristics seeded');
-        tempStroage = [];
-        stream.resume();
+        Char.insertMany(tempStroage).then(() => {
+          console.log(counter + ' lines of Characteristics seeded');
+          tempStroage = [];
+          stream.resume();
+        })
+        .catch((err) => {
+          console.log(err);
+        })
       }
     })
     .on('end', () => {
       if (tempStroage.length) {
         stream.pause();
-        Char.insertMany(tempStroage);
+        Char.insertMany(tempStroage)
         stream.resume();
       }
       index.db.collection('chars').createIndex({id: 1},{unique: true});
@@ -187,6 +208,7 @@ async function seedCharacteristics() {
 
 async function seedMetaCharData() {
   return new Promise(function(resolve, reject) {
+    console.log('Charactersitics Meta Grouping...');
     CharReview.aggregate([
       {
         '$lookup': {
@@ -234,7 +256,7 @@ async function seedMetaCharData() {
 
 };
 
-async function seedingData () {
+async function seedingData() {
   await seedReviews();
   await seedPhotos();
   await seedResults();
@@ -243,8 +265,7 @@ async function seedingData () {
   await seedMetaCharData();
 };
 
-// seedingData();
-seedMetaCharData();
+seedingData();
 
 //Stress Test (local)
 //Httperf, K6, Artillery

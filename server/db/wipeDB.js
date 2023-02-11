@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-var url = 'mongodb://localhost/SDC2';
-mongoose.connect(url, {useNewUrlParser: true, useUnifiedTopology: true})
+require('dotenv').config();
+mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true, useUnifiedTopology: true})
   .then(() => {
     mongoose.connection.db.dropDatabase(function(err, result) {
       if (err) {

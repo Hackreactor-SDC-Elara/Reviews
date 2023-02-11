@@ -25,74 +25,27 @@ module.exports = {
       product_id: targetProdId
     };
     if (sortOption === 'newest') {
-      await index.db.collection('Results').aggregate([
-          {
-            '$match': {
-              '_id': targetProdId
-            }
-          }, {
-            '$unwind': {
-              'path': '$results'
-            }
-          }, {
-            '$sort': {
-              'results.helpfulness': -1
-            }
-          }, {
-            '$limit': count
-          }, {
-            '$group': {
-              '_id': '$_id',
-              'results': {
-                '$push': '$results'
-              }
-            }
-          }
-        ]).toArray()
+      await index.db.collection('reviews').find({product_id: targetProdId}).sort({date: 1}).limit(count).toArray()
         .then((result) => {
           console.log(result);
-          outgoingData.results = result[0].results;
+          outgoingData.results = result;
           res.status(200).send(outgoingData);
         })
         .catch((err) => {
           console.log(err);
-          res.status(500).send(err);
+          res.status(500).send();
         })
     } else {
-      await index.db.collection('Results').aggregate([
-          {
-            '$match': {
-              '_id': targetProdId
-            }
-          }, {
-            '$unwind': {
-              'path': '$results'
-            }
-          }, {
-            '$sort': {
-              'results.helpfulness': -1
-            }
-          }, {
-            '$limit': count
-          }, {
-            '$group': {
-              '_id': '$_id',
-              'results': {
-                '$push': '$results'
-              }
-            }
-          }
-        ]).toArray()
+      await index.db.collection('reviews').find({product_id: targetProdId}).sort({helpfulness: -1}).limit(count).toArray()
         .then((result) => {
-          outgoingData.results = result[0].results;
+          outgoingData.results = result;
           res.status(200).send(outgoingData);
         })
         .catch((err) => {
           console.log(err);
-          res.status(500).send(err);
+          res.status(500).send();
         })
     }
-
   },
 
   postReviews: async (req, res) => {
@@ -164,13 +117,9 @@ module.exports = {
       // console.log('grabbing names: ', (grabName - start)/1000);
     }
     await index.db.collection('Characteristics').bulkWrite(bulkStorage);
-      // let bulkWriting = Date.now();
-      // console.log('bulkWrite names: ', (bulkWriting - start)/1000);
-    await index.db.collection('Results').updateOne({'_id' : targetProdId}, {$push: {results: incomingData}})
       .then(() => {
-        // let resultsInsert = Date.now();
-        // console.log('Results insertion: ', (resultsInsert - start)/1000);
-        res.status(201).send('Review Posted');
+        console.log('Review Posted');
+        res.status(201).send();
       })
       .catch((err) => {
         console.log(err);
@@ -193,34 +142,14 @@ module.exports = {
       res.status(500).send();
       return;
     }
-    var targetProdId = '';
-    //find product_id to update Results
-    await index.db.collection('reviews').find({'id': targetReviewId}).toArray()
-      .then((result) => {
-        var targetProdId = result[0].product_id;
-        index.db.collection('Results').updateOne(
-          {
-            '_id': targetProdId
-          }, {
-            $inc: {
-              'results.$[element].helpfulness': 1
-            }
-          }, {
-            arrayFilters: [{
-              'element.id': targetReviewId
-            }]
-          })
-      })
-      .catch((err) => {
-        console.log(err);
-      })
     await index.db.collection('reviews').updateOne({ 'id': targetReviewId}, {$inc: {helpfulness: 1}})
       .then((result) => {
-        res.status(204).send('Helpfulness Updated');
+        console.log('Helpfulness updated');
+        res.status(204).send();
       })
       .catch((err) => {
         console.log(err);
-        res.status(500).send(err);
+        res.status(500).send();
       })
   },
 
@@ -239,29 +168,6 @@ module.exports = {
       res.status(500).send();
       return;
     }
-    var targetProdId = '';
-    //find product_id to update Results
-    await index.db.collection('reviews').find({'id': parseInt(targetReviewId)}).toArray()
-      .then((result) => {
-        var targetProdId = result[0].product_id;
-        return index.db.collection('Results').updateOne({
-          '_id': targetProdId
-        }, {
-          $set: {
-            'results.$[element].reported' : true
-          }
-        }, {
-          arrayFilters: [{
-            'element.id': targetReviewId
-          }]
-        })
-      })
-      .then((result) => {
-        // console.log(result);
-      })
-      .catch((err) => {
-        console.log(err);
-      })
     await index.db.collection('reviews').updateOne({
       'id': targetReviewId
     }, {

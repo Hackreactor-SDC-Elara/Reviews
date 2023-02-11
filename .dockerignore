@@ -1,0 +1,6 @@
+./node_modules
+Dockerfile
+./coverage
+.dockerignore
+docker-compose.yaml
+mongo

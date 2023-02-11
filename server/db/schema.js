@@ -1,13 +1,5 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-var url = 'mongodb://localhost/SDC2';
-mongoose.connect(url, {useNewUrlParser: true, useUnifiedTopology: true})
-  .then(() => {
-    console.log('MongoDB connected');
-  })
-  .catch((err) => {
-    console.log(err, 'MongoDB connection error');
-  });
 
 const reviewsSchema = new Schema({
   id: {type: Number, required: true, index: { unique: true }}, //review_id
