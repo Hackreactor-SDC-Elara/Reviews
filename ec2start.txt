@@ -7,7 +7,7 @@ sudo apt install nodejs
 https://docs.docker.com/engine/install/ubuntu/
 
 ##file transfer
-scp -i /Users/hyoon/Workspace/rpp2207/SDC/Reviews/SDC-KEY.pem /Users/hyoon/Workspace/rpp2207/SDC/Reviews/rawData/characteristic_reviews.csv ubuntu@ec2-107-23-106-53.compute-1.amazonaws.com:/home/ubuntu/Reviews
-scp -i /Users/hyoon/Workspace/rpp2207/SDC/Reviews/SDC-KEY.pem /Users/hyoon/Workspace/rpp2207/SDC/Reviews/rawData/characteristics.csv ubuntu@ec2-107-23-106-53.compute-1.amazonaws.com:/home/ubuntu/Reviews
-scp -i /Users/hyoon/Workspace/rpp2207/SDC/Reviews/SDC-KEY.pem /Users/hyoon/Workspace/rpp2207/SDC/Reviews/rawData/reviews.csv ubuntu@ec2-107-23-106-53.compute-1.amazonaws.com:/home/ubuntu/Reviews
-scp -i /Users/hyoon/Workspace/rpp2207/SDC/Reviews/SDC-KEY.pem /Users/hyoon/Workspace/rpp2207/SDC/Reviews/rawData/reviews_photos.csv ubuntu@ec2-107-23-106-53.compute-1.amazonaws.com:/home/ubuntu/Reviews
+scp -i /Users/hyoon/Workspace/rpp2207/SDC/Reviews/SDC-KEY.pem /Users/hyoon/Workspace/rpp2207/SDC/Reviews/rawData/characteristic_reviews.csv ubuntu@ec2-107-23-106-53.compute-1.amazonaws.com:/home/ubuntu/Reviews/rawData
+scp -i /Users/hyoon/Workspace/rpp2207/SDC/Reviews/SDC-KEY.pem /Users/hyoon/Workspace/rpp2207/SDC/Reviews/rawData/characteristics.csv ubuntu@ec2-107-23-106-53.compute-1.amazonaws.com:/home/ubuntu/Reviews/rawData
+scp -i /Users/hyoon/Workspace/rpp2207/SDC/Reviews/SDC-KEY.pem /Users/hyoon/Workspace/rpp2207/SDC/Reviews/rawData/reviews.csv ubuntu@ec2-107-23-106-53.compute-1.amazonaws.com:/home/ubuntu/Reviews/rawData
+scp -i /Users/hyoon/Workspace/rpp2207/SDC/Reviews/SDC-KEY.pem /Users/hyoon/Workspace/rpp2207/SDC/Reviews/rawData/reviews_photos.csv ubuntu@ec2-107-23-106-53.compute-1.amazonaws.com:/home/ubuntu/Reviews/rawData
