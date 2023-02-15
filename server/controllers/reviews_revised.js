@@ -116,7 +116,7 @@ module.exports = {
       // let grabName = Date.now();
       // console.log('grabbing names: ', (grabName - start)/1000);
     }
-    await index.db.collection('Characteristics').bulkWrite(bulkStorage);
+    await index.db.collection('Characteristics').bulkWrite(bulkStorage)
       .then(() => {
         console.log('Review Posted');
         res.status(201).send();
