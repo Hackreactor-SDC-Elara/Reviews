@@ -215,9 +215,6 @@ async function seedCharacteristics() {
       } else {
         resolve();
       }
-      .catch((err) => {
-        console.log(err);
-      })
     })
     .on('error', () => {
       console.log('Characteristics Seeding Failed');
