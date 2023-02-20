@@ -40,9 +40,16 @@ async function seedReviews() {
         })
       }
       index.db.collection('reviews').createIndex({id: 1},{unique: true})
-      index.db.collection('reviews').createIndex({product_id: 1});
-      console.log('Review Seeding Done');
-      resolve();
+      .then(() => {
+        index.db.collection('reviews').createIndex({product_id: 1, id: 1});
+      })
+      .then(() => {
+        console.log('Review Seeding Done');
+        resolve();
+      })
+      .catch((err) => {
+        console.log(err);
+      })
     })
     .on('error', () => {
       console.log('Review Seeding Failed');
@@ -157,9 +164,14 @@ async function seedCharReviews() {
         CharReview.insertMany(tempStroage);
         stream.resume();
       }
-      index.db.collection('charreviews').createIndex({id: 1},{unique: true});
-      console.log('Characteristics Reivews Seeding Done');
-      resolve();
+      index.db.collection('charreviews').createIndex({id: 1},{unique: true})
+      .then(() => {
+        console.log('Characteristics Reivews Seeding Done');
+        resolve();
+      })
+      .catch((err) => {
+        console.log(err);
+      })
     })
     .on('error', () => {
       console.log('Characteristics Reivews Seeding Failed');
@@ -195,9 +207,14 @@ async function seedCharacteristics() {
         Char.insertMany(tempStroage)
         stream.resume();
       }
-      index.db.collection('chars').createIndex({id: 1},{unique: true});
-      console.log('Characteristics Seeding Done');
-      resolve();
+      index.db.collection('chars').createIndex({id: 1},{unique: true})
+      .then(() => {
+        console.log('Characteristics Seeding Done');
+        resolve();
+      })
+      .catch((err) => {
+        console.log(err);
+      })
     })
     .on('error', () => {
       console.log('Characteristics Seeding Failed');
