@@ -3,3 +3,4 @@ Dockerfile
 ./coverage
 .dockerignore
 docker-compose.yaml
+rawData
