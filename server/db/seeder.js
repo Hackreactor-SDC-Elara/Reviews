@@ -39,7 +39,7 @@ async function seedReviews() {
           stream.resume();
         })
       }
-      index.db.collection('reviews').createIndex({id: 1},{unique: true});
+      index.db.collection('reviews').createIndex({id: 1},{unique: true})
       index.db.collection('reviews').createIndex({product_id: 1});
       console.log('Review Seeding Done');
       resolve();
@@ -62,7 +62,7 @@ async function seedPhotos() {
       delete data.review_id;
       var updateOne = {updateOne : {filter: {id : targetReviewId}, update: {$push: {photos : data}}}};
       tempStroage.push(updateOne);
-      if (counter % 1000 === 0) {
+      if (counter % 100 === 0) {
         stream.pause();
         Reviews.bulkWrite(tempStroage).then(() => {
           console.log(counter + ' lines of Photos seeded');
