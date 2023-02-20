@@ -39,10 +39,7 @@ async function seedReviews() {
           stream.resume();
         })
       }
-      index.db.collection('reviews').createIndex({id: 1},{unique: true})
-      .then(() => {
-        index.db.collection('reviews').createIndex({product_id: 1, id: 1});
-      })
+      index.db.collection('reviews').createIndex({product_id: 1, id: 1})
       .then(() => {
         console.log('Review Seeding Done');
         resolve();
