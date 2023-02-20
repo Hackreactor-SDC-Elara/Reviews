@@ -20,7 +20,7 @@ async function seedReviews() {
       counter++;
       var targetProductID = data.product_id;
       tempStroage.push(data);
-      if (counter % 10000 === 0) {
+      if (counter % 1000 === 0) {
         stream.pause();
         Reviews.insertMany(tempStroage).then(() => {
           console.log(counter + ' lines of Reviews seeded');
@@ -37,16 +37,15 @@ async function seedReviews() {
         stream.pause();
         Reviews.insertMany(tempStroage).then(() => {
           stream.resume();
+          console.log('Review Seeding Done');
+          resolve();
         })
-      }
-      index.db.collection('reviews').createIndex({product_id: 1, id: 1})
-      .then(() => {
-        console.log('Review Seeding Done');
+        .catch((err) => {
+          console.log(err);
+        })
+      } else {
         resolve();
-      })
-      .catch((err) => {
-        console.log(err);
-      })
+      }
     })
     .on('error', () => {
       console.log('Review Seeding Failed');
@@ -82,11 +81,15 @@ async function seedPhotos() {
     .on('end', () => {
       if (tempStroage.length) {
         stream.pause();
-        Reviews.bulkWrite(tempStroage);
-        stream.resume();
+        Reviews.bulkWrite(tempStroage).then(() => {
+          stream.resume();
+          console.log('Photos Seeding Done');
+          resolve();
+        })
+      } else {
+        console.log('Photos Seeding Done');
+        resolve();
       }
-      console.log('Photos Seeding Done');
-      resolve();
     })
     .on('error', () => {
       console.log('Photos Seeding Failed');
@@ -158,17 +161,17 @@ async function seedCharReviews() {
     .on('end', () => {
       if (tempStroage.length) {
         stream.pause();
-        CharReview.insertMany(tempStroage);
-        stream.resume();
-      }
-      index.db.collection('charreviews').createIndex({id: 1},{unique: true})
-      .then(() => {
-        console.log('Characteristics Reivews Seeding Done');
+        CharReview.insertMany(tempStroage).then(() => {
+          stream.resume();
+          console.log('Characteristics Reivews Seeding Done');
+          resolve();
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+      } else {
         resolve();
-      })
-      .catch((err) => {
-        console.log(err);
-      })
+      }
     })
     .on('error', () => {
       console.log('Characteristics Reivews Seeding Failed');
@@ -201,14 +204,17 @@ async function seedCharacteristics() {
     .on('end', () => {
       if (tempStroage.length) {
         stream.pause();
-        Char.insertMany(tempStroage)
-        stream.resume();
-      }
-      index.db.collection('chars').createIndex({id: 1},{unique: true})
-      .then(() => {
-        console.log('Characteristics Seeding Done');
+        Char.insertMany(tempStroage).then(() => {
+          stream.resume();
+          console.log('Characteristics Seeding Done');
+          resolve();
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+      } else {
         resolve();
-      })
+      }
       .catch((err) => {
         console.log(err);
       })

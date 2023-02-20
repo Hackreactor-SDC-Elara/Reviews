@@ -16,6 +16,7 @@ const reviewsSchema = new Schema({
   helpfulness: {type: Number, required:true},
   photos: []
 });
+reviewsSchema.index({product_id: 1, id: -1}, {sparse: true});
 
 const charSchema = new Schema({
   id : {type: Number, index: { unique: true }},

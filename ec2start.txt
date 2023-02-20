@@ -13,3 +13,4 @@ scp -i /Users/hyoon/Workspace/rpp2207/SDC/Reviews/SDC-KEY.pem /Users/hyoon/Works
 scp -i /Users/hyoon/Workspace/rpp2207/SDC/Reviews/SDC-KEY.pem /Users/hyoon/Workspace/rpp2207/SDC/Reviews/rawData/reviews_photos.csv ubuntu@ec2-107-23-106-53.compute-1.amazonaws.com:/home/ubuntu/Reviews/rawData
 
 sudo rm -rf /var/lib/docker/
+docker system prune -a
