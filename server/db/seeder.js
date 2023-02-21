@@ -274,8 +274,8 @@ async function seedMetaCharData() {
 };
 
 async function seedingData() {
-  await seedReviews();
-  await seedPhotos();
+  // await seedReviews();
+  // await seedPhotos();
   // await seedResults();
   await seedCharReviews();
   await seedCharacteristics();
