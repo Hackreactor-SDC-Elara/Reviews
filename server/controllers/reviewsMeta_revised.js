@@ -85,10 +85,10 @@ module.exports = {
         }
       }
     ]).toArray();
-    var recommendation = await index.db.collection('Results').aggregate([
+    var recommendation = await index.db.collection('reviews').aggregate([
       {
         '$match': {
-          '_id': targetProdId
+          'product_id': targetProdId
         }
       }, {
         '$group': {
