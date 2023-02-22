@@ -30,8 +30,8 @@ app.use(routes);
 app.get('/test', (req, res) => {
   res.status(200).send('SDC TESTING')
 });
-app.get('/loaderio-276111d0d28725c1aae4d46c357d01e0', (req, res) => {
-  res.status(200).send('loaderio-276111d0d28725c1aae4d46c357d01e0');
+app.get('/loaderio-53935c367ddba0bf80dee9adb95e969c', (req, res) => {
+  res.status(200).send('loaderio-53935c367ddba0bf80dee9adb95e969c');
 })
 app.listen(port, () => {
   console.log(`server pid: ${process.pid} listening to http://localhost:${port}`)
