@@ -1,35 +1,35 @@
 version: '3.9'
 
 services:
-  # Mongo DB Service (localhost: 2717, container: 27107)
-  mongo_db:
-    container_name: mongo_db
-    image: mongo:latest
-    restart: always
-    ports:
-      - 2717:27017
-    volumes:
-      - mongo_db:/data/db
+  # # Mongo DB Service (localhost: 2717, container: 27107)
+  # mongo_db:
+  #   container_name: mongo_db
+  #   image: mongo:latest
+  #   restart: always
+  #   ports:
+  #     - 2717:27017
+  #   volumes:
+  #     - mongo_db:/data/db
 
   # Node API Service
-  # api:
-  #   build: .
-  #   ports:
-  #     - 4000:3000
-  #   volumes:
-  #     - .:/Reviews
-  #   environment:
-  #     NODE_ENV: production
-  #     PORT: 3000
-  #     MONGODB_URI: mongodb://mongo_db:27017
-  #     MONGOOSE_URI: mongodb://mongo_db:27017/SDC
-  #     DB_NAME: SDC
-  #   depends_on:
-  #     - mongo_db
-  #   # command:
-  #   #   ["npm","run","seedDB"]
-  #   links:
-  #     - mongo_db
+  api:
+    build: .
+    ports:
+      - 4000:3000
+    volumes:
+      - .:/Reviews
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      MONGODB_URI: mongodb://172.31.62.121:2717
+      MONGOOSE_URI: mongodb://172.31.62.121:2717/SDC
+      DB_NAME: SDC
+    depends_on:
+      - mongo_db
+    # command:
+    #   ["npm","run","seedDB"]
+    links:
+      - mongo_db
 
 volumes:
   mongo_db: {}
