@@ -24,12 +24,12 @@ services:
       MONGODB_URI: mongodb://172.31.62.121:2717
       MONGOOSE_URI: mongodb://172.31.62.121:2717/SDC
       DB_NAME: SDC
-    depends_on:
-      - mongo_db
+    # depends_on:
+    #   - mongo_db
     # command:
     #   ["npm","run","seedDB"]
-    links:
-      - mongo_db
+    # links:
+    #   - mongo_db
 
 volumes:
   mongo_db: {}
