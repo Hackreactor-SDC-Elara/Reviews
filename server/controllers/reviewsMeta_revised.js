@@ -144,6 +144,12 @@ module.exports = {
 
       Promise.all([rating, recommendation, characteristic])
       .then((results) => {
+        if (results[0].length === 0 || results[1] === 0 || results[2].length[2] === 0) {
+          outgoingData.ratings = [];
+          outgoingData.recommended = [];
+          outgoingData.characteristics = [];
+          res.status(404).send(outgoingData);
+        }
         var ratings = results[0][0];
         var recommended = results[1][0];
         var charTemp = results[2];

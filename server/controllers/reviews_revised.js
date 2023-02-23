@@ -27,7 +27,10 @@ module.exports = {
     if (sortOption === 'newest') {
       await index.db.collection('reviews').find({product_id: targetProdId}).sort({date: 1}).limit(count).toArray()
         .then((result) => {
-          console.log(result);
+          if (result.length === 0) {
+            outgoingData.results = [];
+            res.status(404).send([]);
+          }
           outgoingData.results = result;
           res.status(200).send(outgoingData);
         })
@@ -38,6 +41,10 @@ module.exports = {
     } else {
       await index.db.collection('reviews').find({product_id: targetProdId}).sort({helpfulness: -1}).limit(count).toArray()
         .then((result) => {
+          if (result.length === 0) {
+            outgoingData.results = result;
+            res.status(404).send(outgoingData);
+          }
           outgoingData.results = result;
           res.status(200).send(outgoingData);
         })

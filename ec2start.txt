@@ -14,3 +14,24 @@ scp -i /Users/hyoon/Workspace/rpp2207/SDC/Reviews/SDC-KEY.pem /Users/hyoon/Works
 
 sudo rm -rf /var/lib/docker/
 docker system prune -a
+
+sudo apt-get update
+# install nginx as reverse proxy & web server
+sudo apt-get install nginx
+
+sudo rm /etc/nginx/sites-enabled/default
+sudo vi /etc/nginx/nginx.conf
+
+***watch the video to find out what to put into the nginx.conf***
+
+# nginx should've started, this is optional
+sudo systemctl start nginx
+
+# nginx restart
+sudo service nginx restart
+
+# to check nginx running
+service nginx status
+
+# check network on ubuntu
+sudo netstat -natp
